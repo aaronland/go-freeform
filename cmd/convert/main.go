@@ -59,8 +59,6 @@ func main() {
 			log.Fatalf("Failed to derive images for %s, %v", path, err)
 		}
 
-		log.Println(path, tm, len(images))
-
 		jpeg_opts := &jpeg.Options{
 			Quality: 100,
 		}
