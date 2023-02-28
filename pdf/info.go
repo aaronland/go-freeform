@@ -13,7 +13,9 @@ import (
 func Info(ctx context.Context, r io.ReadSeeker) (map[string]string, error) {
 
 	pages := []string{}
-	conf := &pdfcpu.Configuration{}
+	conf := &pdfcpu.Configuration{
+		// Unit: pdfcpu.INCHES,
+	}
 
 	info, err := api.Info(r, pages, conf)
 

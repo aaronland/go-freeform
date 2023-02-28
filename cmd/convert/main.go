@@ -4,6 +4,9 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"image"
+	"image/color"
+	"image/draw"
 	"image/jpeg"
 	"log"
 	"os"
@@ -12,6 +15,7 @@ import (
 	"time"
 
 	"github.com/aaronland/go-freeform/pdf"
+	"github.com/aaronland/go-image-rotate/imaging"
 	"github.com/sfomuseum/go-exif-update"
 )
 
@@ -79,7 +83,18 @@ func main() {
 
 			defer os.Remove(temp_wr.Name())
 
-			err = jpeg.Encode(temp_wr, im, jpeg_opts)
+			// Account for the fact that everything in PDF-land is upside down
+			im = imaging.Rotate180(imaging.FlipV(im))
+			im = imaging.Rotate180(im)
+			
+			backgroundColor := color.RGBA{0xff, 0xff, 0xff, 0xff}
+			dst := image.NewRGBA(im.Bounds())
+			
+			draw.Draw(dst, dst.Bounds(), image.NewUniform(backgroundColor), image.Point{}, draw.Src)
+			draw.Draw(dst, dst.Bounds(), im, im.Bounds().Min, draw.Over)
+			
+			
+			err = jpeg.Encode(temp_wr, dst, jpeg_opts)
 
 			if err != nil {
 				log.Fatalf("Failed to write JPEG for %s, %v", jpeg_path, err)

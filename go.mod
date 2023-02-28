@@ -3,6 +3,7 @@ module github.com/aaronland/go-freeform
 go 1.19
 
 require (
+	github.com/aaronland/go-image-rotate v0.0.4
 	github.com/pdfcpu/pdfcpu v0.3.13
 	github.com/sfomuseum/go-exif-update v0.1.0
 )

@@ -1,6 +1,12 @@
 github.com/aaronland/go-http-bootstrap v0.1.0/go.mod h1:LBQ4TNCD74+4KKEmBIIzrMxeAksRp/wQ7FPA8VZ/v4E=
 github.com/aaronland/go-http-rewrite v0.0.6/go.mod h1:+Ehclg6SIiQPEJlSv3LR+8rojSSYPLGQuDf2z9bChpY=
 github.com/aaronland/go-http-server v0.0.7/go.mod h1:6dtsZDrQG0XvUOCL0eaHsUw+7gw3Xa/Nm+XofvkSw2w=
+github.com/aaronland/go-image-decode v0.0.2/go.mod h1:dOMo+O8DdvO05WCjW7Z1Yj2F9nmTncwIgij2rFMVSUQ=
+github.com/aaronland/go-image-encode v0.0.0-20200215191655-047f61aedbfe/go.mod h1:cYgNgNYMYq2pi85vYqoUVzXFwOOujIRULt7UbRBEnPU=
+github.com/aaronland/go-image-rotate v0.0.4 h1:a7YW8eS7QpKV6MQnhoxfg4LEll6S+IJRpTJfX53Sct8=
+github.com/aaronland/go-image-rotate v0.0.4/go.mod h1:gCKVhuaCzyTl/0ua4HBMOGa2qWmEQnYQ62gxKj71Ihg=
+github.com/aaronland/go-image-transform v0.0.0-20201125043008-ea524ffbd26f/go.mod h1:FvLYXM1IRbDWlyt6zfuBgbheb113ZIzog3vVcYjIK10=
+github.com/aaronland/go-roster v0.0.1/go.mod h1:AcovpxlG1XxJxX2Fjqlm63fEIBhCjEIBV4lP87FZDmI=
 github.com/aaronland/go-roster v0.0.2/go.mod h1:AcovpxlG1XxJxX2Fjqlm63fEIBhCjEIBV4lP87FZDmI=
 github.com/akrylysov/algnhsa v0.0.0-20190319020909-05b3d192e9a7/go.mod h1:HhzjNA0EjUWcwHTUMwqrpeAdIF3gRmpH0HpWx1hYJSc=
 github.com/aws/aws-lambda-go v1.9.0/go.mod h1:zUsUQhAUjYzR8AuduJPCfhBuKWUaDbQiPOG+ouzmE1A=
@@ -44,6 +50,7 @@ github.com/pdfcpu/pdfcpu v0.3.13/go.mod h1:UJc5xsXg0fpmjp1zOPdyYcAQArc/Zf3V0nv5U
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
 github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
+github.com/rwcarlsen/goexif v0.0.0-20190401172101-9e8deecbddbd/go.mod h1:hPqNNc0+uJM6H+SuU8sEs5K5IQeKccPqeSjfgcKGgPk=
 github.com/sfomuseum/go-exif-update v0.1.0 h1:ND/f+PRExcwCqo17/UMm0bcCFf4nO0Xd64Nf+ebxNsQ=
 github.com/sfomuseum/go-exif-update v0.1.0/go.mod h1:5i66R5hsyA8s+pC62qh6wlJAIGCUMr5knH7Ble0OP2w=
 github.com/sfomuseum/go-flags v0.8.2/go.mod h1:ML3DTNbF9xnjExSdS/9FtVLjIUhRU5gm/ehzISv+t2w=
