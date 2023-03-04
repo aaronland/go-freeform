@@ -25,7 +25,8 @@ import (
 	"io"
 	"os"
 	"strings"
-
+	golog "log"
+	
 	"github.com/hhrutter/tiff"
 	"github.com/pdfcpu/pdfcpu/pkg/filter"
 	"github.com/pdfcpu/pdfcpu/pkg/log"
@@ -87,6 +88,8 @@ func pdfImage(xRefTable *XRefTable, sd *StreamDict, thumb bool, objNr int) (*PDF
 		return nil, err
 	}
 
+	golog.Println("COMP", comp)
+	
 	bpc := *sd.IntEntry("BitsPerComponent")
 
 	w := *sd.IntEntry("Width")
@@ -307,6 +310,8 @@ func renderDeviceRGBToPNG(im *PDFImage, resourceName string) (io.Reader, string,
 	b := im.sd.Content
 	log.Debug.Printf("renderDeviceRGBToPNG: objNr=%d w=%d h=%d bpc=%d buflen=%d\n", im.objNr, im.w, im.h, im.bpc, len(b))
 
+	golog.Printf("renderDeviceRGBToPNG: objNr=%d w=%d h=%d bpc=%d buflen=%d\n", im.objNr, im.w, im.h, im.bpc, len(b))
+	
 	// Validate buflen.
 	// Sometimes there is a trailing 0x0A in addition to the imagebytes.
 	if len(b) < (3*im.bpc*im.w*im.h+7)/8 {
@@ -407,6 +412,8 @@ func renderICCBased(xRefTable *XRefTable, im *PDFImage, resourceName string, cs 
 		return nil, "", errors.Errorf("pdfcpu: renderICCBased: objNr=%d corrupt image object %v\n", im.objNr, *im.sd)
 	}
 
+	golog.Println("N", n)
+	
 	switch n {
 	case 1:
 		// Gray
@@ -633,6 +640,8 @@ func renderFlateEncodedImage(xRefTable *XRefTable, sd *StreamDict, thumb bool, r
 		return nil, "", err
 	}
 
+	golog.Printf("O %s %T\n", o, o)
+	
 	switch cs := o.(type) {
 
 	case Name:
@@ -660,6 +669,7 @@ func renderFlateEncodedImage(xRefTable *XRefTable, sd *StreamDict, thumb bool, r
 			return renderCalRGBToPNG(pdfImage, resourceName)
 
 		case ICCBasedCS:
+			golog.Println("WOOP")
 			return renderICCBased(xRefTable, pdfImage, resourceName, cs)
 
 		case IndexedCS:
@@ -779,12 +789,15 @@ func RenderImage(xRefTable *XRefTable, sd *StreamDict, thumb bool, resourceName 
 	switch f {
 
 	case filter.Flate, filter.CCITTFax, filter.RunLength:
+		golog.Println("FLATE")
 		return renderFlateEncodedImage(xRefTable, sd, thumb, resourceName, objNr)
 
 	case filter.DCT:
+		golog.Println("DCT")		
 		return renderDCTEncodedImage(xRefTable, sd, thumb, resourceName, objNr)
 
 	case filter.JPX:
+		golog.Println("JPX")
 		// Exception: Write original encoded stream data.
 		return bytes.NewReader(sd.Raw), "jpx", nil
 	}

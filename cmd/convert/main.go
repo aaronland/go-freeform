@@ -12,17 +12,21 @@ import (
 	"image"
 	"image/color"
 	"image/draw"
-	_ "image/jpeg"
-	"image/png"	
+	"image/jpeg"
+	_ "image/png"	
 	"log"
 	"os"
 	"path/filepath"
 	"strings"
 	"time"
-
+	"runtime"
+	
 	"github.com/aaronland/go-freeform/pdf"
 	"github.com/aaronland/go-image-rotate/imaging"
 	"github.com/sfomuseum/go-exif-update"
+	_ "github.com/mandykoh/prism/adobergb"
+	"github.com/mandykoh/prism/srgb"	
+
 )
 
 func main() {
@@ -69,23 +73,33 @@ func main() {
 			log.Fatalf("Failed to derive images for %s, %v", path, err)
 		}
 
-		/*
 		jpeg_opts := &jpeg.Options{
 			Quality: 100,
 		}
-		*/
 		
 		for idx, im := range images {
 
+			log.Printf("IM %T\n", im)
+			log.Printf("MODEL %T\n", im.ColorModel())
+
+			// https://pkg.go.dev/github.com/mandykoh/prism/adobergb
+			tmp := image.NewNRGBA(im.Bounds())
+			// tmp2 := image.NewNRGBA(im.Bounds())			
+			
+			srgb.EncodeImage(tmp, im, runtime.NumCPU())
+			// adobergb.EncodeImage(tmp2, tmp, runtime.NumCPU())			
+
+			im = tmp
+			
 			i := idx + 1
 
 			jpeg_fname := strings.Replace(fname, ext, "", 1)
-			// jpeg_fname = fmt.Sprintf("%s-%03d.jpg", jpeg_fname, i)
-			jpeg_fname = fmt.Sprintf("%s-%03d.png", jpeg_fname, i)			
+			jpeg_fname = fmt.Sprintf("%s-%03d.jpg", jpeg_fname, i)
+			// jpeg_fname = fmt.Sprintf("%s-%03d.png", jpeg_fname, i)			
 			jpeg_path := filepath.Join(root, jpeg_fname)
 
-			// temp_wr, err := os.CreateTemp("", "freeform.*.jpg")
-			temp_wr, err := os.CreateTemp("", "freeform.*.png")			
+			temp_wr, err := os.CreateTemp("", "freeform.*.jpg")
+			// temp_wr, err := os.CreateTemp("", "freeform.*.png")			
 
 			if err != nil {
 				log.Fatalf("Failed to create temp file for %s, %v", path, err)
@@ -96,16 +110,19 @@ func main() {
 			// Account for the fact that everything in PDF-land is upside down
 			im = imaging.Rotate180(imaging.FlipV(im))
 			im = imaging.Rotate180(im)
+
 			
-			backgroundColor := color.RGBA{0xff, 0xff, 0xff, 0xff}
-			dst := image.NewRGBA(im.Bounds())
+			dst := image.NewNRGBA(im.Bounds())
+
+			backgroundColor := color.NRGBA{0xff, 0xff, 0xff, 0xff}
 			
 			draw.Draw(dst, dst.Bounds(), image.NewUniform(backgroundColor), image.Point{}, draw.Src)
 			draw.Draw(dst, dst.Bounds(), im, im.Bounds().Min, draw.Over)
-			
-			err = png.Encode(temp_wr, dst)
-			
-			// err = jpeg.Encode(temp_wr, dst, jpeg_opts)
+
+
+			// err = png.Encode(temp_wr, dst)
+
+			err = jpeg.Encode(temp_wr, dst, jpeg_opts)
 
 			if err != nil {
 				log.Fatalf("Failed to write JPEG for %s, %v", jpeg_path, err)

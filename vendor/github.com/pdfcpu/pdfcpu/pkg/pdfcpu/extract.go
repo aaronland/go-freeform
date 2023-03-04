@@ -20,7 +20,8 @@ import (
 	"bytes"
 	"io"
 	"strings"
-
+	golog "log"
+	
 	"github.com/pdfcpu/pdfcpu/pkg/filter"
 	"github.com/pdfcpu/pdfcpu/pkg/log"
 	"github.com/pkg/errors"
@@ -361,6 +362,8 @@ func (ctx *Context) ExtractImage(sd *StreamDict, thumb bool, resourceId string, 
 		return nil, err
 	}
 
+	golog.Println("WTF 1")
+	
 	img := &Image{
 		Reader:   r,
 		Name:     resourceId,

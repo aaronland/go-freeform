@@ -23,7 +23,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
-
+	
 	"github.com/pdfcpu/pdfcpu/pkg/log"
 )
 

@@ -6,7 +6,7 @@ import (
 	"image"
 	_ "image/png"
 	"io"
-
+	
 	"github.com/pdfcpu/pdfcpu/pkg/api"
 	"github.com/pdfcpu/pdfcpu/pkg/pdfcpu"
 )
@@ -16,6 +16,15 @@ func Images(ctx context.Context, r io.ReadSeeker) ([]image.Image, error) {
 	pages := []string{}
 	conf := &pdfcpu.Configuration{}
 
+	/*
+
+	309 |func renderDeviceRGBToPNG(im *PDFImage, resourceName string) (io.Reader, string, error) {
+	github.com/pdfcpu/pdfcpu/pkg/pdfcpu/writeImage.go
+
+
+https://github.com/mandykoh/prism
+	*/
+	
 	raw_images, err := api.ExtractImagesRaw(r, pages, conf)
 
 	if err != nil {
