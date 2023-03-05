@@ -44,6 +44,7 @@ func Images(ctx context.Context, r io.ReadSeeker) ([]image.Image, error) {
 			return nil, fmt.Errorf("Failed to decode image, %w", err)
 		}
 
+		// Freeform uses Adobe RGB 1998
 		// https://pkg.go.dev/github.com/mandykoh/prism
 
 		inputImg := prism.ConvertImageToNRGBA(im, runtime.NumCPU())
