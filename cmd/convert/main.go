@@ -1,10 +1,5 @@
 package main
 
-// pdf (preview app):  #E8BCE3
-// png (preview app): #E1BEE2
-// pdf (moz): #e8bde4
-// png: #e8bde4
-
 import (
 	"context"
 	"flag"
@@ -13,19 +8,15 @@ import (
 	"image/color"
 	"image/draw"
 	"image/jpeg"
-	_ "image/png"	
 	"log"
 	"os"
 	"path/filepath"
 	"strings"
 	"time"
-	"runtime"
 	
 	"github.com/aaronland/go-freeform/pdf"
 	"github.com/aaronland/go-image-rotate/imaging"
 	"github.com/sfomuseum/go-exif-update"
-	_ "github.com/mandykoh/prism/adobergb"
-	"github.com/mandykoh/prism/srgb"	
 
 )
 
@@ -79,27 +70,13 @@ func main() {
 		
 		for idx, im := range images {
 
-			log.Printf("IM %T\n", im)
-			log.Printf("MODEL %T\n", im.ColorModel())
-
-			// https://pkg.go.dev/github.com/mandykoh/prism/adobergb
-			tmp := image.NewNRGBA(im.Bounds())
-			// tmp2 := image.NewNRGBA(im.Bounds())			
-			
-			srgb.EncodeImage(tmp, im, runtime.NumCPU())
-			// adobergb.EncodeImage(tmp2, tmp, runtime.NumCPU())			
-
-			im = tmp
-			
 			i := idx + 1
 
 			jpeg_fname := strings.Replace(fname, ext, "", 1)
 			jpeg_fname = fmt.Sprintf("%s-%03d.jpg", jpeg_fname, i)
-			// jpeg_fname = fmt.Sprintf("%s-%03d.png", jpeg_fname, i)			
 			jpeg_path := filepath.Join(root, jpeg_fname)
 
 			temp_wr, err := os.CreateTemp("", "freeform.*.jpg")
-			// temp_wr, err := os.CreateTemp("", "freeform.*.png")			
 
 			if err != nil {
 				log.Fatalf("Failed to create temp file for %s, %v", path, err)
@@ -107,10 +84,11 @@ func main() {
 
 			defer os.Remove(temp_wr.Name())
 
+			// START OF move in to pdf/image.go ?
+			
 			// Account for the fact that everything in PDF-land is upside down
 			im = imaging.Rotate180(imaging.FlipV(im))
 			im = imaging.Rotate180(im)
-
 			
 			dst := image.NewNRGBA(im.Bounds())
 
@@ -119,9 +97,8 @@ func main() {
 			draw.Draw(dst, dst.Bounds(), image.NewUniform(backgroundColor), image.Point{}, draw.Src)
 			draw.Draw(dst, dst.Bounds(), im, im.Bounds().Min, draw.Over)
 
-
-			// err = png.Encode(temp_wr, dst)
-
+			// END OF move in to pdf/image.go ?
+			
 			err = jpeg.Encode(temp_wr, dst, jpeg_opts)
 
 			if err != nil {
