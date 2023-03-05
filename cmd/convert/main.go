@@ -4,20 +4,15 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"image"
-	"image/color"
-	"image/draw"
 	"image/jpeg"
 	"log"
 	"os"
 	"path/filepath"
 	"strings"
 	"time"
-	
-	"github.com/aaronland/go-freeform/pdf"
-	"github.com/aaronland/go-image-rotate/imaging"
-	"github.com/sfomuseum/go-exif-update"
 
+	"github.com/aaronland/go-freeform/pdf"
+	"github.com/sfomuseum/go-exif-update"
 )
 
 func main() {
@@ -67,7 +62,7 @@ func main() {
 		jpeg_opts := &jpeg.Options{
 			Quality: 100,
 		}
-		
+
 		for idx, im := range images {
 
 			i := idx + 1
@@ -84,22 +79,7 @@ func main() {
 
 			defer os.Remove(temp_wr.Name())
 
-			// START OF move in to pdf/image.go ?
-			
-			// Account for the fact that everything in PDF-land is upside down
-			im = imaging.Rotate180(imaging.FlipV(im))
-			im = imaging.Rotate180(im)
-			
-			dst := image.NewNRGBA(im.Bounds())
-
-			backgroundColor := color.NRGBA{0xff, 0xff, 0xff, 0xff}
-			
-			draw.Draw(dst, dst.Bounds(), image.NewUniform(backgroundColor), image.Point{}, draw.Src)
-			draw.Draw(dst, dst.Bounds(), im, im.Bounds().Min, draw.Over)
-
-			// END OF move in to pdf/image.go ?
-			
-			err = jpeg.Encode(temp_wr, dst, jpeg_opts)
+			err = jpeg.Encode(temp_wr, im, jpeg_opts)
 
 			if err != nil {
 				log.Fatalf("Failed to write JPEG for %s, %v", jpeg_path, err)
@@ -111,11 +91,6 @@ func main() {
 				log.Fatalf("Failed to close %s, %v", jpeg_path, err)
 			}
 
-			os.Rename(temp_wr.Name(), jpeg_path)
-			log.Println(temp_wr.Name())
-			log.Println(jpeg_path)
-			continue
-			
 			jpeg_r, err := os.Open(temp_wr.Name())
 
 			if err != nil {

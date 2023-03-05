@@ -4,35 +4,18 @@ import (
 	"context"
 	"fmt"
 	"image"
-	_ "image/png"
+	"image/color"
+	"image/draw"
 	"io"
 	"runtime"
-	
+
+	"github.com/aaronland/go-image-rotate/imaging"
+	"github.com/mandykoh/prism"
+	"github.com/mandykoh/prism/adobergb"
+	"github.com/mandykoh/prism/srgb"
 	"github.com/pdfcpu/pdfcpu/pkg/api"
 	"github.com/pdfcpu/pdfcpu/pkg/pdfcpu"
-	"github.com/mandykoh/prism/srgb"	
-	"github.com/mandykoh/prism/adobergb"
-	"github.com/mandykoh/prism"
 )
-
-
-/*
-
-                        c := color.NRGBA{R: b[i], G: b[i+1], B: b[i+2], A: alpha}
-
-                        ac, alpha2 := adobergb.ColorFromNRGBA(c)     // Interpret image pixel as Adobe RGB and convert to linear representation
-                        sc := srgb.ColorFromXYZ(ac.ToXYZ())         // Convert to XYZ, then from XYZ to sRGB linear representation
-                        c = sc.ToNRGBA(alpha2)
-
-	br := bytes.NewReader(buf.Bytes())
-	md, _, _:= autometa.Load(br)
-
-	golog.Println(md)
-
-	pr, err := md.ICCProfile()
-	golog.Println(pr, err)
-
-*/
 
 func Images(ctx context.Context, r io.ReadSeeker) ([]image.Image, error) {
 
@@ -42,7 +25,7 @@ func Images(ctx context.Context, r io.ReadSeeker) ([]image.Image, error) {
 	// At the end of the line these images are being extracted here:
 	// func renderDeviceRGBToPNG(im *PDFImage, resourceName string) (io.Reader, string, error) {
 	// github.com/pdfcpu/pdfcpu/pkg/pdfcpu/writeImage.go
-	
+
 	raw_images, err := api.ExtractImagesRaw(r, pages, conf)
 
 	if err != nil {
@@ -50,6 +33,8 @@ func Images(ctx context.Context, r io.ReadSeeker) ([]image.Image, error) {
 	}
 
 	images := make([]image.Image, len(raw_images))
+
+	backgroundColor := color.NRGBA{0xff, 0xff, 0xff, 0xff}
 
 	for idx, raw_im := range raw_images {
 
@@ -60,21 +45,33 @@ func Images(ctx context.Context, r io.ReadSeeker) ([]image.Image, error) {
 		}
 
 		// https://pkg.go.dev/github.com/mandykoh/prism
-		
+
 		inputImg := prism.ConvertImageToNRGBA(im, runtime.NumCPU())
-		convertedImg := image.NewNRGBA(inputImg.Rect)
-		
+		new_im := image.NewNRGBA(inputImg.Rect)
+
 		for i := inputImg.Rect.Min.Y; i < inputImg.Rect.Max.Y; i++ {
 			for j := inputImg.Rect.Min.X; j < inputImg.Rect.Max.X; j++ {
 				inCol, alpha := adobergb.ColorFromNRGBA(inputImg.NRGBAAt(j, i))
 				outCol := srgb.ColorFromXYZ(inCol.ToXYZ())
-				convertedImg.SetNRGBA(j, i, outCol.ToNRGBA(alpha))
+				new_im.SetNRGBA(j, i, outCol.ToNRGBA(alpha))
 			}
 		}
-		
-		images[idx] = convertedImg
-		
+
+		// Account for the fact that everything in PDF-land is upside down
+
+		new_im = imaging.Rotate180(imaging.FlipV(new_im))
+		new_im = imaging.Rotate180(new_im)
+
+		// Draw image on white background
+
+		final_im := image.NewNRGBA(new_im.Bounds())
+
+		draw.Draw(final_im, final_im.Bounds(), image.NewUniform(backgroundColor), image.Point{}, draw.Src)
+		draw.Draw(final_im, final_im.Bounds(), new_im, new_im.Bounds().Min, draw.Over)
+
+		images[idx] = final_im
+
 	}
-	
+
 	return images, nil
 }
