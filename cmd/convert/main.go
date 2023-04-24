@@ -9,7 +9,6 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-	"time"
 
 	"github.com/aaronland/go-freeform/pdf"
 	"github.com/sfomuseum/go-exif-update"
@@ -105,7 +104,8 @@ func main() {
 				log.Fatalf("Failed to open file for writing %s, %v", jpeg_path, err)
 			}
 
-			jpeg_dt := tm.Format(time.RFC3339)
+			// https://github.com/rwcarlsen/goexif/blob/go1/exif/exif.go#L385
+			jpeg_dt := tm.Format("2006:01:02 15:04:05")
 
 			exif_props := map[string]interface{}{
 				"DateTime":          jpeg_dt,
