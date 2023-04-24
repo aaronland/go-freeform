@@ -111,6 +111,7 @@ func main() {
 				"DateTime":          jpeg_dt,
 				"DateTimeDigitized": jpeg_dt,
 				"DateTimeOriginal":  jpeg_dt,
+				"Software": "freeform",
 			}
 
 			err = update.UpdateExif(jpeg_r, jpeg_wr, exif_props)
