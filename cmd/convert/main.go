@@ -4,14 +4,13 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"image/jpeg"
 	"log"
 	"os"
 	"path/filepath"
 	"strings"
 
 	"github.com/aaronland/go-freeform/pdf"
-	"github.com/sfomuseum/go-exif-update"
+	"github.com/aaronland/go-image/exif"
 )
 
 func main() {
@@ -58,10 +57,6 @@ func main() {
 			log.Fatalf("Failed to derive images for %s, %v", path, err)
 		}
 
-		jpeg_opts := &jpeg.Options{
-			Quality: 100,
-		}
-
 		for idx, im := range images {
 
 			i := idx + 1
@@ -69,34 +64,6 @@ func main() {
 			jpeg_fname := strings.Replace(fname, ext, "", 1)
 			jpeg_fname = fmt.Sprintf("%s-%03d.jpg", jpeg_fname, i)
 			jpeg_path := filepath.Join(root, jpeg_fname)
-
-			temp_wr, err := os.CreateTemp("", "freeform.*.jpg")
-
-			if err != nil {
-				log.Fatalf("Failed to create temp file for %s, %v", path, err)
-			}
-
-			defer os.Remove(temp_wr.Name())
-
-			err = jpeg.Encode(temp_wr, im, jpeg_opts)
-
-			if err != nil {
-				log.Fatalf("Failed to write JPEG for %s, %v", jpeg_path, err)
-			}
-
-			err = temp_wr.Close()
-
-			if err != nil {
-				log.Fatalf("Failed to close %s, %v", jpeg_path, err)
-			}
-
-			jpeg_r, err := os.Open(temp_wr.Name())
-
-			if err != nil {
-				log.Fatalf("Failed to open %s, %v", temp_wr.Name(), err)
-			}
-
-			defer jpeg_r.Close()
 
 			jpeg_wr, err := os.OpenFile(jpeg_path, os.O_RDWR|os.O_CREATE, 0644)
 
@@ -111,10 +78,10 @@ func main() {
 				"DateTime":          jpeg_dt,
 				"DateTimeDigitized": jpeg_dt,
 				"DateTimeOriginal":  jpeg_dt,
-				"Software": "freeform",
+				"Software":          "freeform",
 			}
 
-			err = update.UpdateExif(jpeg_r, jpeg_wr, exif_props)
+			err = exif.UpdateExif(im, jpeg_wr, exif_props)
 
 			if err != nil {
 				log.Fatalf("Failed to update EXIF data for %s, %w", jpeg_path, err)

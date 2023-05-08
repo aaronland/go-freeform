@@ -5,14 +5,11 @@ import (
 	"fmt"
 	"image"
 	"image/color"
-	"image/draw"
 	"io"
-	"runtime"
 
-	"github.com/aaronland/go-image-rotate/imaging"
-	"github.com/mandykoh/prism"
-	"github.com/mandykoh/prism/adobergb"
-	"github.com/mandykoh/prism/srgb"
+	"github.com/aaronland/go-image/background"
+	"github.com/aaronland/go-image/colour"
+	"github.com/aaronland/go-image/imaging"
 	"github.com/pdfcpu/pdfcpu/pkg/api"
 	"github.com/pdfcpu/pdfcpu/pkg/pdfcpu"
 )
@@ -45,18 +42,7 @@ func Images(ctx context.Context, r io.ReadSeeker) ([]image.Image, error) {
 		}
 
 		// Freeform uses Adobe RGB 1998
-		// https://pkg.go.dev/github.com/mandykoh/prism
-
-		inputImg := prism.ConvertImageToNRGBA(im, runtime.NumCPU())
-		new_im := image.NewNRGBA(inputImg.Rect)
-
-		for i := inputImg.Rect.Min.Y; i < inputImg.Rect.Max.Y; i++ {
-			for j := inputImg.Rect.Min.X; j < inputImg.Rect.Max.X; j++ {
-				inCol, alpha := adobergb.ColorFromNRGBA(inputImg.NRGBAAt(j, i))
-				outCol := srgb.ColorFromXYZ(inCol.ToXYZ())
-				new_im.SetNRGBA(j, i, outCol.ToNRGBA(alpha))
-			}
-		}
+		new_im := colour.ToAdobeRGB(im)
 
 		// Account for the fact that everything in PDF-land is upside down
 
@@ -65,10 +51,7 @@ func Images(ctx context.Context, r io.ReadSeeker) ([]image.Image, error) {
 
 		// Draw image on white background
 
-		final_im := image.NewNRGBA(new_im.Bounds())
-
-		draw.Draw(final_im, final_im.Bounds(), image.NewUniform(backgroundColor), image.Point{}, draw.Src)
-		draw.Draw(final_im, final_im.Bounds(), new_im, new_im.Bounds().Min, draw.Over)
+		final_im := background.AddBackground(new_im, backgroundColor)
 
 		images[idx] = final_im
 
