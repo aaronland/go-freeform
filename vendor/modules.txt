@@ -42,11 +42,11 @@ github.com/golang/geo/r2
 github.com/golang/geo/r3
 github.com/golang/geo/s1
 github.com/golang/geo/s2
-# github.com/hhrutter/lzw v0.0.0-20190829144645-6f07a24e8650
-## explicit; go 1.12
+# github.com/hhrutter/lzw v1.0.0
+## explicit; go 1.19
 github.com/hhrutter/lzw
-# github.com/hhrutter/tiff v0.0.0-20190829141212-736cae8d0bc7
-## explicit; go 1.12
+# github.com/hhrutter/tiff v1.0.0
+## explicit; go 1.19
 github.com/hhrutter/tiff
 # github.com/mandykoh/go-parallel v0.1.0
 ## explicit; go 1.15
@@ -63,21 +63,34 @@ github.com/mandykoh/prism/linear
 github.com/mandykoh/prism/linear/lut
 github.com/mandykoh/prism/matrix
 github.com/mandykoh/prism/srgb
-# github.com/pdfcpu/pdfcpu v0.3.13
-## explicit; go 1.17
+# github.com/mattn/go-runewidth v0.0.14
+## explicit; go 1.9
+github.com/mattn/go-runewidth
+# github.com/pdfcpu/pdfcpu v0.4.1
+## explicit; go 1.20
 github.com/pdfcpu/pdfcpu/internal/corefont/metrics
 github.com/pdfcpu/pdfcpu/pkg/api
 github.com/pdfcpu/pdfcpu/pkg/filter
 github.com/pdfcpu/pdfcpu/pkg/font
 github.com/pdfcpu/pdfcpu/pkg/log
 github.com/pdfcpu/pdfcpu/pkg/pdfcpu
+github.com/pdfcpu/pdfcpu/pkg/pdfcpu/color
 github.com/pdfcpu/pdfcpu/pkg/pdfcpu/create
+github.com/pdfcpu/pdfcpu/pkg/pdfcpu/draw
+github.com/pdfcpu/pdfcpu/pkg/pdfcpu/font
+github.com/pdfcpu/pdfcpu/pkg/pdfcpu/form
+github.com/pdfcpu/pdfcpu/pkg/pdfcpu/format
+github.com/pdfcpu/pdfcpu/pkg/pdfcpu/matrix
+github.com/pdfcpu/pdfcpu/pkg/pdfcpu/model
 github.com/pdfcpu/pdfcpu/pkg/pdfcpu/primitives
+github.com/pdfcpu/pdfcpu/pkg/pdfcpu/types
 github.com/pdfcpu/pdfcpu/pkg/pdfcpu/validate
-github.com/pdfcpu/pdfcpu/pkg/types
 # github.com/pkg/errors v0.9.1
 ## explicit
 github.com/pkg/errors
+# github.com/rivo/uniseg v0.4.4
+## explicit; go 1.18
+github.com/rivo/uniseg
 # github.com/sfomuseum/go-exif-update v0.1.2
 ## explicit; go 1.18
 github.com/sfomuseum/go-exif-update
